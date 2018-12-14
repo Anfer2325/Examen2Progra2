@@ -1,6 +1,7 @@
 
 import java.io.File;
 import java.io.RandomAccessFile;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -12,6 +13,7 @@ public class Main {
    
  public static void main(String [] args) {
      File equipos= new File(f,"Equipos.tm");
+     File jugadores = new File(f,"Jugadores.tm");
      try{
         
      rafEquipos = new RandomAccessFile(equipos,"rw");}catch(Exception e){System.out.println("Error");}
@@ -19,6 +21,7 @@ public class Main {
         System.out.println("1. Crear equipo");
         System.out.println("2. Modificar");
         System.out.println("3. Eliminar Equipos");
+        System.out.println("4. Crear Jugador");
         int opcion = leer.nextInt();
         
         switch(opcion){
@@ -158,10 +161,10 @@ public class Main {
                     }catch(Exception e ){System.out.println("Error capturando Equipos");}
                     try{
                     rafEquipos.seek(0);
-                    rafEquipos.close();
-                    equipos.delete();
+                   
+                   
                     
-                   /* for(Equipos f:arrayequipos){
+                    for(Equipos f:arrayequipos){
                         if(f.getCodigo()==codigoEliminar){
                             System.out.println("Equipo eliminado");
                         }else{
@@ -170,12 +173,49 @@ public class Main {
                             rafEquipos.writeUTF(f.getCiudad());
                             rafEquipos.writeInt(f.getCapacidad());
                         }
-                    }*/
-                    }catch(Exception e){System.out.println("Error ELiminando Equipo");}
+                    }
+                    }catch(Exception e){System.out.println("Error ELiminando Equipo");System.out.println(e.fillInStackTrace());}
                     
                 
                 break;
-              
+            case 4:
+              ArrayList<Equipos> arrayequipos2 = new ArrayList<>();
+                    try{
+                    rafEquipos.seek(0);
+                    while(rafEquipos.getFilePointer()<rafEquipos.length()){
+                        Equipos capturado = new Equipos(rafEquipos.readInt(),rafEquipos.readUTF(),rafEquipos.readUTF(),rafEquipos.readInt());
+                        arrayequipos2.add(capturado);
+                        
+                    }
+                    }catch(Exception e ){System.out.println("Error capturando Equipos"); System.out.println(e.fillInStackTrace());}
+                    System.out.println("Seleccione el equipo que desea");
+                    for(Equipos f : arrayequipos2){
+                        System.out.println(f.getCodigo()+". "+f.getNombre());
+                    }
+                    int codequipo = leer.nextInt();
+                    System.out.println(" Ingrese el nombre del jugador: ");
+                    leer.nextLine();
+                    String nombreJugador = leer.nextLine();
+                    System.out.println("Ingrese el numero del dorsal");
+                    int dorsal = leer.nextInt();
+                    System.out.println("Ingrese la posicion");
+                    String posicion= leer.next();
+                    System.out.println("Ingrese la edad");
+                    int edad = leer.nextInt();
+                    System.out.println("Nacionalidad");
+                    String nacionalidad = leer.next();
+                    try{
+                    Jugadores jugador = new Jugadores(codequipo,nombreJugador,dorsal,posicion,edad,nacionalidad);
+                    rafJugadores = new RandomAccessFile(jugadores,"rw");
+                    rafJugadores.seek(rafJugadores.length());
+                    rafJugadores.writeInt(jugador.getCodigoEquipo());
+                    rafJugadores.writeUTF(jugador.getNombre());
+                    rafJugadores.writeInt(jugador.getDorsal());
+                    rafJugadores.writeUTF(jugador.getPosicion());
+                    rafJugadores.writeInt(jugador.getEdad());
+                    rafJugadores.writeUTF(jugador.getNacionalidad());
+                    }catch(Exception e ){System.out.println("Error el crear juguador");}
+                break;
         }
     
     
