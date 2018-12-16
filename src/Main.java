@@ -3,6 +3,7 @@ import java.io.File;
 import java.io.RandomAccessFile;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Scanner;
 
 
@@ -16,12 +17,16 @@ public class Main {
      File jugadores = new File(f,"Jugadores.tm");
      try{
         
-     rafEquipos = new RandomAccessFile(equipos,"rw");}catch(Exception e){System.out.println("Error");}
+     rafEquipos = new RandomAccessFile(equipos,"rw");
+     rafJugadores= new RandomAccessFile(jugadores,"rw");
+     }catch(Exception e){System.out.println("Error");}
     do{
         System.out.println("1. Crear equipo");
         System.out.println("2. Modificar");
         System.out.println("3. Eliminar Equipos");
         System.out.println("4. Crear Jugador");
+        System.out.println("6. Listar jugadores por edad");
+        System.out.println("7. Listar equipos con jugadores");
         int opcion = leer.nextInt();
         
         switch(opcion){
@@ -166,7 +171,10 @@ public class Main {
                     
                     for(Equipos f:arrayequipos){
                         if(f.getCodigo()==codigoEliminar){
-                            System.out.println("Equipo eliminado");
+                          rafEquipos.writeInt(0);
+                            rafEquipos.writeUTF(f.getNombre());
+                            rafEquipos.writeUTF(f.getCiudad());
+                            rafEquipos.writeInt(f.getCapacidad());
                         }else{
                             rafEquipos.writeInt(f.getCodigo());
                             rafEquipos.writeUTF(f.getNombre());
@@ -190,7 +198,8 @@ public class Main {
                     }catch(Exception e ){System.out.println("Error capturando Equipos"); System.out.println(e.fillInStackTrace());}
                     System.out.println("Seleccione el equipo que desea");
                     for(Equipos f : arrayequipos2){
-                        System.out.println(f.getCodigo()+". "+f.getNombre());
+                        if(f.getCodigo()!=0){
+                        System.out.println(f.getCodigo()+". "+f.getNombre());}
                     }
                     int codequipo = leer.nextInt();
                     System.out.println(" Ingrese el nombre del jugador: ");
@@ -216,6 +225,74 @@ public class Main {
                     rafJugadores.writeUTF(jugador.getNacionalidad());
                     }catch(Exception e ){System.out.println("Error el crear juguador");}
                 break;
+                
+            case 7: 
+                try{
+                rafEquipos.seek(0);
+                rafJugadores.seek(0);
+                while(rafEquipos.getFilePointer()<rafEquipos.length()){
+                    
+                    int cod =rafEquipos.readInt();
+                    String equipo=rafEquipos.readUTF();
+                    if(cod!=0){
+                    rafJugadores.seek(0);
+                    System.out.println("Equipo : "+ equipo);
+                    while(rafJugadores.getFilePointer()<rafJugadores.length()){
+                        
+                        if(rafJugadores.readInt()==cod){
+                            
+                            System.out.println("Nombre: "+rafJugadores.readUTF()+" Dorsal: "+rafJugadores.readInt());
+                            rafJugadores.readUTF();
+                            rafJugadores.readInt();
+                            rafJugadores.readUTF();
+                            
+                        }else{
+                            rafJugadores.readUTF();
+                            rafJugadores.readInt();
+                             rafJugadores.readUTF();
+                            rafJugadores.readInt();
+                            rafJugadores.readUTF();
+                        }
+                    
+                    }
+                     
+                   rafEquipos.readUTF();
+                   rafEquipos.readInt();
+                    }else{
+                  
+                   rafEquipos.readUTF();
+                   rafEquipos.readInt();}
+                    
+                }
+                }catch(Exception e){System.out.println("Error al listar equipos");System.out.println(e.fillInStackTrace());}
+                break;
+                
+            case 6:
+                try{
+                rafJugadores.seek(0);
+                ArrayList<Jugadores> jugadoresarray = new ArrayList<>();
+                while(rafJugadores.getFilePointer()<rafJugadores.length()){
+                 Jugadores jugador= new Jugadores(rafJugadores.readInt(),rafJugadores.readUTF(),rafJugadores.readInt(),rafJugadores.readUTF(),rafJugadores.readInt(),rafJugadores.readUTF());
+                 jugadoresarray.add(jugador);
+                }
+               ArrayList<Integer>edades = new ArrayList<>();
+               
+                for(Jugadores x:jugadoresarray){
+                    edades.add(x.getEdad());
+                    
+                }
+                Collections.sort(edades);
+                int po= 0;
+                for(int g=0;g<=jugadoresarray.size();g++){
+                    if(jugadoresarray.get(g).getEdad()==edades.get(po)){
+                        System.out.println(jugadoresarray.get(g).getNombre());
+                        g--;
+                        po+=1;
+                    }
+                }
+                }catch(Exception e){System.out.println("Error al listar los jugadores por edad");}
+                break;
+            
         }
     
     
