@@ -25,8 +25,11 @@ public class Main {
         System.out.println("2. Modificar");
         System.out.println("3. Eliminar Equipos");
         System.out.println("4. Crear Jugador");
+        ;
         System.out.println("6. Listar jugadores por edad");
         System.out.println("7. Listar equipos con jugadores");
+        System.out.println("8. Listar atributos con cantidad de jugadores");
+        System.out.println("9. Atributos de equipo por capacidad de estadio");
         int opcion = leer.nextInt();
         
         switch(opcion){
@@ -292,7 +295,41 @@ public class Main {
                 }
                 }catch(Exception e){System.out.println("Error al listar los jugadores por edad");}
                 break;
-            
+         
+            case 8:
+                 try{
+                rafJugadores.seek(0);
+                ArrayList<Jugadores> jugadoresarray = new ArrayList<>();
+                while(rafJugadores.getFilePointer()<rafJugadores.length()){
+                 Jugadores jugador= new Jugadores(rafJugadores.readInt(),rafJugadores.readUTF(),rafJugadores.readInt(),rafJugadores.readUTF(),rafJugadores.readInt(),rafJugadores.readUTF());
+                 jugadoresarray.add(jugador);
+                }
+                
+                 ArrayList<Equipos> arrayequipo = new ArrayList<>();
+                    
+                    rafEquipos.seek(0);
+                    while(rafEquipos.getFilePointer()<rafEquipos.length()){
+                        Equipos capturado = new Equipos(rafEquipos.readInt(),rafEquipos.readUTF(),rafEquipos.readUTF(),rafEquipos.readInt());
+                        arrayequipo.add(capturado);
+                        
+                    }
+                    for(Equipos e:arrayequipo){
+                    if(e.getCodigo()!=0){
+                        int cantidad = 0;
+                        
+                    for(Jugadores p:jugadoresarray){
+                       if(p.getCodigoEquipo()== e.getCodigo()){
+                       cantidad+=1;
+                       } 
+                    }
+                        System.out.println("Codigo del equipo: "+ e.getCodigo()+ " Nombre del equipo: "+e.getNombre()+" Ciudad: "+ e.getCiudad()+" Capacidad: "+e.getCapacidad());
+                        System.out.println("Cantidad de jugadores: "+cantidad);
+                    }
+                    }
+                 
+                 
+                 }catch(Exception e){System.out.println("Error al listar atributos de equipos");}
+                break;
         }
     
     
