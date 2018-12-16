@@ -25,7 +25,7 @@ public class Main {
         System.out.println("2. Modificar");
         System.out.println("3. Eliminar Equipos");
         System.out.println("4. Crear Jugador");
-        ;
+        System.out.println("5. Listar jugadores por posicion");
         System.out.println("6. Listar jugadores por edad");
         System.out.println("7. Listar equipos con jugadores");
         System.out.println("8. Listar atributos con cantidad de jugadores");
@@ -210,8 +210,23 @@ public class Main {
                     String nombreJugador = leer.nextLine();
                     System.out.println("Ingrese el numero del dorsal");
                     int dorsal = leer.nextInt();
-                    System.out.println("Ingrese la posicion");
-                    String posicion= leer.next();
+                    System.out.println("Seleccione la posicion");
+                    System.out.println("1. Defensa");
+                    System.out.println("2. Portero");
+                    System.out.println("3. Delantero");
+                    int opcion5= leer.nextInt();
+                    String posicion = "";
+                    switch(opcion5){
+                        case 1:
+                            posicion ="Defensa";
+                            break;
+                        case 2:
+                            posicion="Portero";
+                            break;
+                        case 3:
+                            posicion ="Delantero";
+                            break;
+                    }
                     System.out.println("Ingrese la edad");
                     int edad = leer.nextInt();
                     System.out.println("Nacionalidad");
@@ -329,6 +344,40 @@ public class Main {
                  
                  
                  }catch(Exception e){System.out.println("Error al listar atributos de equipos");}
+                break;
+                
+            case 5:
+                System.out.println("Seleccione posicion");
+                System.out.println("1. Defensa");
+                System.out.println("2. Delantero");
+                System.out.println("3. Portero");
+                int pos = leer.nextInt();
+                String buscar ="";
+                switch(pos){
+                    case 1:
+                        buscar="Defensa";
+                        break;
+                    case 2: 
+                        buscar= "Delantero";
+                        break;
+                    case 3:
+                        buscar="Portero";
+                        break;
+                }
+                try{
+                 rafJugadores.seek(0);
+                ArrayList<Jugadores> jugadoresarray = new ArrayList<>();
+                while(rafJugadores.getFilePointer()<rafJugadores.length()){
+                 Jugadores jugador= new Jugadores(rafJugadores.readInt(),rafJugadores.readUTF(),rafJugadores.readInt(),rafJugadores.readUTF(),rafJugadores.readInt(),rafJugadores.readUTF());
+                 jugadoresarray.add(jugador);
+                }
+                for(Jugadores l:jugadoresarray){
+                if(l.posicion.equals(buscar)&&l.codigoEquipo!=0){
+                    System.out.println("Codigo Equipo: "+l.codigoEquipo+" Nombre jugador: "+l.getNombre()+" Posicion : "+l.getPosicion());
+                }
+                }
+                }catch(Exception e){System.out.println("Error al buscar por posicion");}
+                
                 break;
         }
     
